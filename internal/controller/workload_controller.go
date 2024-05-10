@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 
 	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -88,7 +87,7 @@ func (r *WorkloadReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		job := batchv1.Job{}
 
 		err := crdClient.Get().Resource("jobs").Namespace(wl.Namespace).Name(jobName).Do(context.Background()).Into(&job)
-		fmt.Println(err)
+
 		if err == nil && len(job.Spec.Template.Spec.NodeSelector) > 0 &&
 			len(job.Spec.Template.Spec.NodeSelector["carbon"]) > 0 && len(wl.Status.AdmissionChecks) > 0 && wl.Status.AdmissionChecks[0].State == "Pending" {
 
