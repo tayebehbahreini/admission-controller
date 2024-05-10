@@ -1,0 +1,83 @@
+
+apiVersion: v1
+kind:  Namespace
+metadata:
+  name: n1
+  labels:
+    name: n1
+---  
+apiVersion: v1
+kind:  Namespace
+metadata:
+  name: n2
+  labels:
+    name: n2
+---  
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: LocalQueue
+metadata:
+  namespace: n1 
+  name: q1
+spec:
+  clusterQueue: cq-1
+
+---  
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: LocalQueue
+metadata:
+  namespace: n2 
+  name: q2
+spec:
+  clusterQueue: cq-1
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job1
+  namespace: n1
+  labels:
+    kueue.x-k8s.io/queue-name: q1
+spec:
+  parallelism: 2
+  completions: 2
+  suspend: true
+  template:
+    spec:
+      containers:
+      - name: dummy-job
+        image: gcr.io/k8s-staging-perf-tests/sleep:v0.1.0
+        args: ["60s"]
+        resources:
+          requests:
+            cpu: 1
+            memory: "200Mi"
+      restartPolicy: Never
+  
+
+
+---  
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job2
+  namespace: n2
+  labels:
+    kueue.x-k8s.io/queue-name: q2
+spec:
+  parallelism: 2
+  completions: 2
+  suspend: true
+  template:
+    spec:
+      containers:
+      - name: dummy-job
+        image: gcr.io/k8s-staging-perf-tests/sleep:v0.1.0
+        args: ["60s"]
+        resources:
+          requests:
+            cpu: 1
+            memory: "200Mi"
+      restartPolicy: Never
+      

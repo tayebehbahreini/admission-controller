@@ -1,0 +1,33 @@
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: AdmissionCheck
+metadata:
+  name: caspian-check
+spec:
+  controllerName: kueue.x-k8s.io/admission-controller
+  retryDelayMinutes: 5
+  
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ClusterQueue
+metadata:
+  name: "cq-1"
+spec:
+
+
+  namespaceSelector: {} 
+  resourceGroups:
+  - coveredResources: ["cpu", "memory", "pods"]
+    flavors:
+    - name: "default-flavor"
+      resources:
+      - name: "cpu"
+        nominalQuota: 9
+      - name: "memory"
+        nominalQuota: 36Gi
+      - name: "pods"
+        nominalQuota: 15
+  
+  admissionChecks:
+  - caspian-check
+  stopPolicy: None
+  

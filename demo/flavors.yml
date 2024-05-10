@@ -1,0 +1,16 @@
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: "low-carbon"
+spec:
+  nodeLabels: 
+    carbon: low
+   
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: "high-carbon"
+spec:
+  nodeLabels:
+     carbon: high
